@@ -67,7 +67,7 @@ def main():
     # datasetA = datasets.DatasetFromFilenames(opt, opt.dataA_dir, opt.filenamesA)
     # datasetB = datasets.DatasetFromFilenames(opt, opt.dataB_dir, opt.filenamesB)
 
-    datasetA = my_datasets.ImageFolder(
+    datasetA = datasets.ImageFolder(
         opt.dataA_dir,
         transforms.Compose([
             # transforms.RandomResizedCrop(224),
@@ -76,10 +76,21 @@ def main():
             # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]))
 
+    # datasetBoth = data.MultipleImageFolder(
+    #     [opt.dataA_dir, opt.dataB_dir],
+    #     transforms.Compose([
+    #         # transforms.RandomResizedCrop(224),
+    #         transforms.Resize([255, 255], interpolation=Image.BICUBIC),
+    #         transforms.ToTensor(),
+    #         # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    #     ]))
+
     loaderA = torch.utils.data.DataLoader(
         datasetA, batch_size=opt.batch_size, shuffle=True, num_workers=opt.num_threads, pin_memory=True)  # pin_memory used to be True
     # loaderB = torch.utils.data.DataLoader(
     #    datasetB, batch_size=opt.batch_size, num_workers=opt.num_threads, pin_memory=True)  # pin_memory used to be True
+
+
 
     if os.path.isfile(os.path.join(opt.checkpoints_dir, 'closest_pairs.npy')):
         closest_pairs = np.load(os.path.join(opt.checkpoints_dir, 'closest_pairs.npy'))
@@ -89,9 +100,9 @@ def main():
     for epoch in range(start_epoch, opt.epochs):
 
         # decrease learning rate after 50 epochs
-        if epoch == 50:
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = opt.lr/10
+        lr = opt.lr * (0.1 ** (epoch // 50))
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = lr
 
         # train for one epoch
         train(loaderA, model, loss_fn, optimizer, epoch)
