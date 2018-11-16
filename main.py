@@ -44,6 +44,10 @@ def main():
     # define loss function
     loss_fn = losses.HardNegativeLoss()
 
+    # create checkpoints folder
+    if not os.path.exists(opt.checkpoints_dir):
+        os.mkdir(opt.checkpoints_dir)
+
     if opt.resume_epoch is not None:
         resume_filename = os.path.join(opt.checkpoints_dir, 'checkpoint_epoch%d.pth.tar' % opt.resume_epoch)
         if os.path.isfile(resume_filename):
