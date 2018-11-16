@@ -84,6 +84,11 @@ def main():
 
     for epoch in range(start_epoch, opt.epochs):
 
+        # decrease learning rate after 50 epochs
+        if epoch == 50:
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = opt.lr/10
+
         # train for one epoch
         train(loaderA, model, loss_fn, optimizer, epoch)
 
