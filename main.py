@@ -67,7 +67,8 @@ def main():
     # datasetA = datasets.DatasetFromFilenames(opt, opt.dataA_dir, opt.filenamesA)
     # datasetB = datasets.DatasetFromFilenames(opt, opt.dataB_dir, opt.filenamesB)
 
-    datasetA = datasets.ImageFolder(
+    # difference between this and regular ImageFolder is that this also returns index of image
+    datasetA = my_datasets.ImageFolder(
         opt.dataA_dir,
         transforms.Compose([
             # transforms.RandomResizedCrop(224),
