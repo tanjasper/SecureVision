@@ -103,6 +103,7 @@ def main():
 
         # decrease learning rate after 50 epochs
         lr = opt.lr * (0.1 ** (epoch // 50))
+        print('Learning rate is %0.6f' % lr)
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
 
