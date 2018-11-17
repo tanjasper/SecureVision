@@ -23,6 +23,8 @@ class MaskAlexNet(nn.Module):
             elif isinstance(m, nn.Linear):
                 nn.init.normal_(m.weight, 0, 0.01)
                 nn.init.constant_(m.bias, 0)
+        # initialize mask differently
+        nn.init.uniform_(self.optics.weight, 0, 1)
 
 
 def alexnet_layers(in_channels=1, num_classes=2):

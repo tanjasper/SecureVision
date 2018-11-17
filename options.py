@@ -17,6 +17,7 @@ def generate_parser():
     parser.add_argument('--epochs', default=1000, type=int, help='number of total epochs to run')
     parser.add_argument('--resume_epoch', default=None, type=int, help='continue training by loading this epoch')
     parser.add_argument('-b', '--batch_size', default=128, type=int, help='mini-batch size (default: 128)')
+    parser.add_argument('--batch_sizeB', default=32, type=int, help='batch size for classification (default: 32)')
     parser.add_argument('--lr', '--learning_rate', default=0.0001, type=float, help='initial learning rate')
     parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
     parser.add_argument('--weight-decay', '--wd', default=1e-4, type=float, help='weight decay (default: 1e-4)')
@@ -26,7 +27,7 @@ def generate_parser():
     parser.add_argument('--shuffle_train', dest='shuffle_train', action='store_true', help='shuffle training data')
     parser.add_argument('--isTrain', dest='isTrain', action='store_true', help='Flag for training')
     parser.add_argument('--save_freq', default=10, type=int, help='save frequency')
-    parser.add_argument('--nn_mask', dest='isTrain', action='store_true', help='Enforce mask to be non-negative')
+    parser.add_argument('--nn_mask', dest='nn_mask', action='store_true', help='Enforce mask to be non-negative')
 
     parser.set_defaults(shuffle_train=True, isTrain=True, nn_mask=False)
 
