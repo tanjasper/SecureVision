@@ -157,9 +157,6 @@ def train(train_loader, model, loss_fn, optimizer, epoch):
         loss_vals.append(loss.item())
         losses.update(loss.item(), input.size(0))
 
-        import pdb;
-        pdb.set_trace()
-
         # compute gradient and do SGD step
         optimizer.zero_grad()
         loss.backward()
