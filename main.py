@@ -102,7 +102,8 @@ def main():
     for epoch in range(start_epoch, opt.epochs):
 
         # decrease learning rate after 50 epochs
-        lr = opt.lr * (0.1 ** (epoch // 50))
+        #lr = opt.lr * (0.1 ** (epoch // 50))
+        lr = opt.lr
         print('Learning rate is %0.6f' % lr)
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
@@ -143,6 +144,10 @@ def train(train_loader, model, loss_fn, optimizer, epoch):
             input = input.cuda(opt.gpu, non_blocking=True)
         target = target.cuda(opt.gpu, non_blocking=True)
 
+        # clamp mask weights to be non-negative (maybe?)
+        if opt.nn_mask:
+            model.optics.weight.data.clamp_(min=0, max=1)
+
         # compute output
         input = input[:, 0, :, :].unsqueeze(1)  # send in red channel only
         output = model.optics(input)  # obtain sensor measurements
@@ -152,14 +157,13 @@ def train(train_loader, model, loss_fn, optimizer, epoch):
         loss_vals.append(loss.item())
         losses.update(loss.item(), input.size(0))
 
+        import pdb;
+        pdb.set_trace()
+
         # compute gradient and do SGD step
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
-        # clamp mask weights to be non-negative (maybe?)
-        if opt.nn_mask:
-            model.optics.weight.data.clamp_(min=0, max=1)
 
         # measure elapsed time
         batch_time.update(time.time() - end)

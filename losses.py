@@ -42,4 +42,4 @@ class HardNegativeLoss(nn.Module):
         # loss = (feats[top_negative_pairs[:, 0]] - feats[top_negative_pairs[:, 1]]).pow(2).sum(1)  # L2 loss
         # loss = torch.max(torch.abs(feats[top_negative_pairs[:, 0]] - feats[top_negative_pairs[:, 1]]), 1)[0]  # l_inf loss by recalculating differences
         loss = distance_matrix[top_negative_pairs[:, 0], top_negative_pairs[:, 1]]  # l_inf loss
-        return loss.mean(), closest_pairs
+        return loss.mean(), closest_pairs#, distance_matrix, top_negative_pairs, feats, feats_temp
