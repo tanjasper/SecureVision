@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="44734e34-bee3-44a3-8c9c-46b877878836" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/losses.py" beforeDir="false" afterPath="$PROJECT_DIR$/losses.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/siamese-triplet" beforeDir="false" afterPath="$PROJECT_DIR$/siamese-triplet" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/siamese-triplet/Experiments_MNIST.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/siamese-triplet/Experiments_MNIST.ipynb" afterDir="false" />
@@ -102,11 +100,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="283">
-              <caret line="105" column="19" selection-start-line="105" selection-start-column="19" selection-end-line="105" selection-end-column="19" />
+            <state relative-caret-position="418">
+              <caret line="93" selection-start-line="93" selection-end-line="94" selection-end-column="96" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
-                <marker date="1542658158059" expanded="true" signature="4688:4694" ph="..." />
+                <marker date="1542658420416" expanded="true" signature="4708:4714" ph="..." />
               </folding>
             </state>
           </provider>
@@ -262,7 +260,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="135" y="134" width="1561" height="984" extended-state="0" />
+    <frame x="2859" y="286" width="1561" height="984" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.30819246" />
@@ -437,11 +435,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="283">
-          <caret line="105" column="19" selection-start-line="105" selection-start-column="19" selection-end-line="105" selection-end-column="19" />
+        <state relative-caret-position="418">
+          <caret line="93" selection-start-line="93" selection-end-line="94" selection-end-column="96" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
-            <marker date="1542658158059" expanded="true" signature="4688:4694" ph="..." />
+            <marker date="1542658420416" expanded="true" signature="4708:4714" ph="..." />
           </folding>
         </state>
       </provider>

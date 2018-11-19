@@ -77,22 +77,22 @@ def main():
             # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]))
 
-    datasetBoth = data.MultipleImageFolder(
-        [opt.dataA_dir, opt.dataB_dir],
-        transforms.Compose([
-            # transforms.RandomResizedCrop(224),
-            transforms.Resize([255, 255], interpolation=Image.BICUBIC),
-            transforms.ToTensor(),
-            # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ]))
+    # datasetBoth = data.MultipleImageFolder(
+    #     [opt.dataA_dir, opt.dataB_dir],
+    #     transforms.Compose([
+    #         # transforms.RandomResizedCrop(224),
+    #         transforms.Resize([255, 255], interpolation=Image.BICUBIC),
+    #         transforms.ToTensor(),
+    #         # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    #     ]))
 
     loaderA = torch.utils.data.DataLoader(
         datasetA, batch_size=opt.batch_size, shuffle=True, num_workers=opt.num_threads, pin_memory=True)
     # loaderB = torch.utils.data.DataLoader(
     #    datasetB, batch_size=opt.batch_size, num_workers=opt.num_threads, pin_memory=True)
 
-    loaderBoth = torch.utils.data.DataLoader(
-        datasetBoth, batch_size=opt.batch_sizeB, num_workers=opt.num_threads, pin_memory=True)
+    # loaderBoth = torch.utils.data.DataLoader(
+    #     datasetBoth, batch_size=opt.batch_sizeB, num_workers=opt.num_threads, pin_memory=True)
 
     if os.path.isfile(os.path.join(opt.checkpoints_dir, 'closest_pairs.npy')):
         closest_pairs = np.load(os.path.join(opt.checkpoints_dir, 'closest_pairs.npy'))
