@@ -21,7 +21,8 @@ class HardNegativeLoss(nn.Module):
         # distance_matrix = -2 * feats.mm(torch.t(feats)) + feats.pow(2).sum(dim=1).view(1, -1) + feats.pow(2).sum(dim=1).view(-1, 1)
         # Uncomment below for l_inf distance
         feats = feats.view(feats.shape[0], -1)  # convert feats to be [batch_size, feat_size]
-        feats = (feats + feats.min(dim=0)[0]) / (feats.max(dim=0)[0] - feats.min(dim=0)[0])  # normalize to [0,1]
+        # feats = (feats + feats.min(dim=0)[0]) / (feats.max(dim=0)[0] - feats.min(dim=0)[0])  # normalize to [0,1]
+        feats = feats / feats.max(dim=0)[0]  # normalize to have a max of 1
         feats_temp = feats.unsqueeze(1)
         distance_matrix = torch.zeros(feats.shape[0], feats.shape[0])
         closest_idx = torch.zeros(feats.shape[0]).long()

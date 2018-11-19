@@ -23,7 +23,7 @@ import data
 import my_datasets
 
 def main():
-    global opt, closest_pairs, epoch
+    global opt, closest_pairs, epoch, lossvals
     start_epoch = 0
     opt = options.generate_parser()
 
@@ -99,14 +99,24 @@ def main():
     else:
         closest_pairs = np.zeros((len(datasetA), opt.epochs)).astype(int)
 
+    # keep track of loss values
+    lossvals = []
+    curr_lr = opt.lr
+    iter_this_lr = 0  # iterations at this learning rate
+
     for epoch in range(start_epoch, opt.epochs):
 
         # decrease learning rate after 50 epochs
         #lr = opt.lr * (0.1 ** (epoch // 50))
-        lr = opt.lr
-        print('Learning rate is %0.6f' % lr)
+        #lr = opt.lr
+        # decrease learning rate if training error is not decreasing
+        if epoch > 1 and lossvals[epoch-1] > lossvals[epoch-2] and iter_this_lr > 5:
+            curr_lr = curr_lr * 0.1
+            iter_this_lr = 0
+        print('Learning rate is %0.6f' % curr_lr)
         for param_group in optimizer.param_groups:
-            param_group['lr'] = lr
+            param_group['lr'] = curr_lr
+        iter_this_lr = iter_this_lr + 1
 
         # train for one epoch
         train(loaderA, model, loss_fn, optimizer, epoch)
@@ -122,20 +132,22 @@ def main():
             mask = model.optics.weight.cpu().detach().numpy().squeeze()
             np.save(os.path.join(opt.checkpoints_dir, 'mask_epoch%d.npy' % epoch), mask)
 
+print('Minimum loss is %f after epoch %d' % (np.min(lossvals), np.argmin(lossvals)-1))
 
 def train(train_loader, model, loss_fn, optimizer, epoch):
 
     batch_time = AverageMeter()
     data_time = AverageMeter()
-    losses = AverageMeter()
+    lossmeter = AverageMeter()
 
     # switch to train mode
     model.train()
 
     end = time.time()
-    for i, (input, target, idx) in enumerate(train_loader):
 
-        loss_vals = []
+    temp_lossvals = []
+
+    for i, (input, target, idx) in enumerate(train_loader):
 
         # measure data loading time
         data_time.update(time.time() - end)
@@ -154,8 +166,8 @@ def train(train_loader, model, loss_fn, optimizer, epoch):
         loss_outputs = loss_fn(output, target, idx)
         loss = loss_outputs[0] if type(loss_outputs) in (tuple, list) else loss_outputs
         closest_pairs[idx, epoch] = loss_outputs[1]  # supposedly, loss_outputs[1] is the closest_pairs
-        loss_vals.append(loss.item())
-        losses.update(loss.item(), input.size(0))
+        temp_lossvals.append(loss.item())
+        lossmeter.update(loss.item(), input.size(0))
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -172,7 +184,9 @@ def train(train_loader, model, loss_fn, optimizer, epoch):
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
                    epoch, i, len(train_loader), batch_time=batch_time,
-                   data_time=data_time, loss=losses))
+                   data_time=data_time, loss=lossmeter))
+
+    lossvals.append(np.mean(temp_lossvals))
 
 
 def save_checkpoint(opt, state, epoch):
