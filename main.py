@@ -132,7 +132,7 @@ def main():
             mask = model.optics.weight.cpu().detach().numpy().squeeze()
             np.save(os.path.join(opt.checkpoints_dir, 'mask_epoch%d.npy' % epoch), mask)
 
-print('Minimum loss is %f after epoch %d' % (np.min(lossvals), np.argmin(lossvals)-1))
+    print('Minimum loss is %f after epoch %d' % (np.min(lossvals), np.argmin(lossvals)-1))
 
 def train(train_loader, model, loss_fn, optimizer, epoch):
 
