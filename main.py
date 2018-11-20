@@ -72,7 +72,7 @@ def main():
         opt.dataA_dir,
         transforms.Compose([
             # transforms.RandomResizedCrop(224),
-            transforms.Resize([255, 255], interpolation=Image.BICUBIC),
+            transforms.Resize([351, 351], interpolation=Image.BICUBIC),
             transforms.ToTensor(),
             # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]))
