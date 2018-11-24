@@ -133,6 +133,7 @@ def main():
         train(loaderA, model, loss_fn, optimizer, epoch)
 
         # save checkpoint
+        mask = model.optics.weight.cpu().detach().numpy().squeeze()
         np.save(os.path.join(opt.checkpoints_dir, 'masks', 'mask_epoch%d.npy' % epoch), mask)
         np.save(os.path.join(opt.checkpoints_dir, 'lossvals.npy'), lossvals)
         if epoch % opt.save_freq == 0:
@@ -142,7 +143,6 @@ def main():
                 'optimizer': optimizer.state_dict(),
             }, epoch)
             np.save(os.path.join(opt.checkpoints_dir, 'closest_pairs.npy'), closest_pairs)
-            mask = model.optics.weight.cpu().detach().numpy().squeeze()
 
     print('Minimum loss is %f after epoch %d' % (np.min(lossvals), np.argmin(lossvals)-1))
 
