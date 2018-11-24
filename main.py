@@ -175,7 +175,7 @@ def train(train_loader, model, loss_fn, optimizer, epoch):
         # compute output
         input = input[:, 0, :, :].unsqueeze(1)  # send in red channel only
         output = model.optics(input)  # obtain sensor measurements
-        loss_outputs = loss_fn(output, target, idx)
+        loss_outputs = loss_fn(output, target, idx, opt.normalize_feats)
         loss = loss_outputs[0] if type(loss_outputs) in (tuple, list) else loss_outputs
         closest_pairs[idx, epoch] = loss_outputs[1]  # supposedly, loss_outputs[1] is the closest_pairs
         temp_lossvals.append(loss.item())

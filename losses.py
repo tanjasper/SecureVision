@@ -10,7 +10,7 @@ class HardNegativeLoss(nn.Module):
     def __init__(self):
         super(HardNegativeLoss, self).__init__()
 
-    def forward(self, feats, labels, image_idxs):
+    def forward(self, feats, labels, image_idxs, normalize_feats):
 
         # Select hard pairs
         #if self.cpu:
@@ -22,7 +22,8 @@ class HardNegativeLoss(nn.Module):
         # Uncomment below for l_inf distance
         feats = feats.view(feats.shape[0], -1)  # convert feats to be [batch_size, feat_size]
         # feats = (feats - feats.min(dim=0)[0]) / (feats.max(dim=0)[0] - feats.min(dim=0)[0])  # normalize to [0,1]
-        feats = feats / feats.max(dim=1)[0].unsqueeze(1)  # normalize to have a max of 1
+        if normalize_feats:
+            feats = feats / feats.max(dim=1)[0].unsqueeze(1)  # normalize to have a max of 1
         feats_temp = feats.unsqueeze(1)
         distance_matrix = torch.zeros(feats.shape[0], feats.shape[0])
         closest_idx = torch.zeros(feats.shape[0]).long()
