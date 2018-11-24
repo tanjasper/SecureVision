@@ -4,7 +4,7 @@ class MaskAlexNet(nn.Module):
     # input size is 255
     def __init__(self, in_channels=1, num_classes=2, init_weights=True):
         super(MaskAlexNet, self).__init__()
-        self.optics = nn.Conv2d(in_channels, 1, kernel_size=128, padding=0)  # input size of 255, output size of 224
+        self.optics = nn.Conv2d(in_channels, 1, kernel_size=128, padding=0, bias=False)  # input size of 255, output size of 224
         self.classifier = alexnet_layers(in_channels, num_classes)
         if init_weights:
             self._initialize_weights()

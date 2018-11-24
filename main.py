@@ -24,6 +24,7 @@ import my_datasets
 
 def main():
     global opt, closest_pairs, epoch, lossvals
+    min_iters_per_lr = 50
     start_epoch = 0
     opt = options.generate_parser()
 
@@ -47,6 +48,8 @@ def main():
     # create checkpoints folder
     if not os.path.exists(opt.checkpoints_dir):
         os.mkdir(opt.checkpoints_dir)
+    if not os.path.exists(os.path.join(opt.checkpoints_dir, 'masks')):
+        os.mkdir(os.path.join(opt.checkpoints_dir, 'masks'))
 
     if opt.resume_epoch is not None:
         resume_filename = os.path.join(opt.checkpoints_dir, 'checkpoint_epoch%d.pth.tar' % opt.resume_epoch)
@@ -57,6 +60,8 @@ def main():
             start_epoch = checkpoint['epoch']
             model.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer'])
+            curr_lr = optimizer.param_groups[0]['lr']
+            #lossvals = np.load(os.path.join(opt.checkpoints_dir, 'lossvals.npy'))
             print("=> loaded checkpoint '{}' (epoch {})".format(resume_filename, checkpoint['epoch']))
         else:
             print("=> no checkpoint found at '{}'".format(resume_filename))
@@ -100,9 +105,15 @@ def main():
         closest_pairs = np.zeros((len(datasetA), opt.epochs)).astype(int)
 
     # keep track of loss values
-    lossvals = []
-    curr_lr = opt.lr
+    if opt.resume_epoch is None:
+        lossvals = []
+        curr_lr = opt.lr
     iter_this_lr = 0  # iterations at this learning rate
+
+    # delete this... only for debugging
+    #lossvals = []
+    #curr_lr = opt.lr
+    #start_epoch = 0
 
     for epoch in range(start_epoch, opt.epochs):
 
@@ -110,7 +121,7 @@ def main():
         #lr = opt.lr * (0.1 ** (epoch // 50))
         #lr = opt.lr
         # decrease learning rate if training error is not decreasing
-        if epoch > 1 and lossvals[epoch-1] > lossvals[epoch-2] and iter_this_lr > 5:
+        if epoch > 1 and lossvals[epoch-1] > lossvals[epoch-2] and iter_this_lr > min_iters_per_lr:
             curr_lr = curr_lr * 0.1
             iter_this_lr = 0
         print('Learning rate is %0.6f' % curr_lr)
@@ -122,6 +133,8 @@ def main():
         train(loaderA, model, loss_fn, optimizer, epoch)
 
         # save checkpoint
+        np.save(os.path.join(opt.checkpoints_dir, 'masks', 'mask_epoch%d.npy' % epoch), mask)
+        np.save(os.path.join(opt.checkpoints_dir, 'lossvals.npy'), lossvals)
         if epoch % opt.save_freq == 0:
             save_checkpoint(opt, {
                 'epoch': epoch + 1,
@@ -130,7 +143,6 @@ def main():
             }, epoch)
             np.save(os.path.join(opt.checkpoints_dir, 'closest_pairs.npy'), closest_pairs)
             mask = model.optics.weight.cpu().detach().numpy().squeeze()
-            np.save(os.path.join(opt.checkpoints_dir, 'mask_epoch%d.npy' % epoch), mask)
 
     print('Minimum loss is %f after epoch %d' % (np.min(lossvals), np.argmin(lossvals)-1))
 
@@ -147,7 +159,7 @@ def train(train_loader, model, loss_fn, optimizer, epoch):
 
     temp_lossvals = []
 
-    for i, (input, target, idx) in enumerate(train_loader):
+    for i, (input, target, idx, path) in enumerate(train_loader):
 
         # measure data loading time
         data_time.update(time.time() - end)
