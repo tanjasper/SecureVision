@@ -28,7 +28,7 @@ def generate_parser():
     parser.add_argument('--isTrain', dest='isTrain', action='store_true', help='Flag for training')
     parser.add_argument('--save_freq', default=10, type=int, help='save frequency')
     parser.add_argument('--nn_mask', dest='nn_mask', action='store_true', help='Enforce mask to be non-negative')
-    parser.add_argument('--normalize_feats', dest='normalize_feats', action='store_true', help='Normalize measurements')
+    parser.add_argument('--normalize_feats', dest='normalize_feats', action='store_false', help='Normalize measurements')
 
     parser.set_defaults(shuffle_train=True, isTrain=True, nn_mask=False, normalize_feats=True)
 
