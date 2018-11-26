@@ -14,6 +14,7 @@ import torch.utils.data.distributed
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import numpy as np
+import scipy.io as sio
 from PIL import Image
 
 import options
@@ -134,7 +135,8 @@ def main():
 
         # save checkpoint
         mask = model.optics.weight.cpu().detach().numpy().squeeze()
-        np.save(os.path.join(opt.checkpoints_dir, 'masks', 'mask_epoch%d.npy' % epoch), mask)
+        # np.save(os.path.join(opt.checkpoints_dir, 'masks', 'mask_epoch%d.npy' % epoch), mask)
+        sio.savemat(os.path.join(opt.checkpoints_dir, 'masks', 'mask_epoch%d' % epoch), {'mask': mask})
         np.save(os.path.join(opt.checkpoints_dir, 'lossvals.npy'), lossvals)
         if epoch % opt.save_freq == 0:
             save_checkpoint(opt, {
