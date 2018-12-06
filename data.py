@@ -24,7 +24,6 @@ class DatasetFromFilenames:
         return len(self.paths)
 
     def __getitem__(self, index):
-        print('Index is %d' % index)
         # obtain the image paths
         im_path = self.paths[index % self.num_im]
         # load images (grayscale for direct inference)
@@ -37,14 +36,24 @@ class DatasetFromFilenames:
         return im
 
 
-# Class for loading data from two datasets with two filenames texts
-class DatasetFromTwoFilenames:
+# Class for loading data from multiple filenames
+# Each filenames will constitute one class/label
+class DatasetFromMultipleFilenames:
 
-    def __init__(self, opt, data_dir, filenames_loc):
+    # data_dirs and filename_locs must be list of strings
+    def __init__(self, opt, data_dirs, filenames_locs, transform):
         self.opt = opt
-        self.data_dir = data_dir
-        self.filenames = filenames_loc
-        self.paths = get_paths(self.filenames, self.data_dir)
+        self.data_dirs = data_dirs
+        self.filename_locs = filenames_locs
+        self.transform = transform
+
+        # obtain paths and labels
+        self.paths = []
+        self.labels = []
+        for idx, filename in enumerate(self.filename_locs):
+            curr_paths = get_paths(filename, self.data_dirs[idx])
+            self.paths = self.paths + curr_paths
+            self.labels = self.labels + len(self.paths)*[idx]
         self.num_im = len(self.paths)
 
     def __len__(self):
@@ -53,14 +62,13 @@ class DatasetFromTwoFilenames:
     def __getitem__(self, index):
         # obtain the image paths
         im_path = self.paths[index % self.num_im]
+        label = self.labels[index % self.num_im]
         # load images (grayscale for direct inference)
         im = Image.open(im_path).convert('RGB')
         # perform transformations
-        im = transforms.Resize([255, 255], interpolation=Image.BICUBIC)(im)
-        im = transforms.ToTensor()(im)
-        im = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])(im)  # imagenet normalization
-        # im = transforms.Normalize((0.588, 0.4489, 0.3844), (0.2789, 0.2426, 0.3089))(im)
-        return im
+        if self.transform is not None:
+            im = self.transform(im)
+        return im, label
 
 
 # function for getting image paths out from filenames text file
