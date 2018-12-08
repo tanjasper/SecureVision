@@ -41,7 +41,7 @@ def main():
         torch.manual_seed(opt.seed)
         cudnn.deterministic = True
 
-    model = networks.MaskVGG16()
+    model = networks.MaskVGG16(num_classes=2, batch_norm=True, mask_size=opt.mask_size, mask_perc=0.5)
     model = model.cuda(opt.gpu)
 
     criterion = nn.CrossEntropyLoss().cuda(opt.gpu)
@@ -160,6 +160,8 @@ def train(train_loader, model, criterion, optimizer, epoch, opt):
         if opt.gpu is not None:
             input = input.cuda(opt.gpu, non_blocking=True)
         target = target.cuda(opt.gpu, non_blocking=True)
+
+        import pdb; pdb.set_trace()
 
         output = model(input, opt)
         loss = criterion(output, target)

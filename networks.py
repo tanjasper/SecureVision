@@ -69,6 +69,8 @@ class MaskVGG16(nn.Module):
             nn.Linear(4096, num_classes),
         )
         if init_weights:
+            if mask_size == 1:
+                mask_perc = 1  # mask_size = 1 means no mask, which is equivalent to 1x1 convolution with weight 1
             self._initialize_weights(mask_perc=mask_perc)
 
     def forward(self, x, opt):
