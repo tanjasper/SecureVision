@@ -34,7 +34,7 @@ def main():
     opt = options_direct_inference.generate_parser()
 
     start_epoch = 0
-    im_dim = opt.mask_size + 224 - 1
+    im_dim = 224
 
     if opt.seed is not None:
         random.seed(opt.seed)
@@ -84,12 +84,14 @@ def main():
 
     cudnn.benchmark = True
 
+
+    normalize = transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
     # Load training data
     train_transform = transforms.Compose([
         transforms.RandomResizedCrop(im_dim),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
-        #normalize,
+        normalize,
     ])
     train_dataset = data.DatasetFromMultipleFilenames(opt,
                                                       [opt.dataA_dir, opt.dataB_dir],
@@ -101,7 +103,7 @@ def main():
         transforms.Resize(im_dim+32),
         transforms.CenterCrop(im_dim),
         transforms.ToTensor(),
-        #normalize,
+        normalize,
     ])
     val_dataset = data.DatasetFromMultipleFilenames(opt,
                                                     [opt.dataA_dir, opt.dataB_dir],

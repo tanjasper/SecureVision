@@ -116,6 +116,44 @@ class MaskVGG16(nn.Module):
                 self.optics.weight.bernoulli_(mask_perc)  # bernoulli 0s and 1s
 
 
+# VGG16 with no optics
+class VGG16(nn.Module):
+
+    def __init__(self, num_classes=2, init_weights=True, batch_norm=True):
+        super(VGG16, self).__init__()
+        self.features = make_layers(cfg['D'], batch_norm=batch_norm)
+        self.classifier = nn.Sequential(
+            nn.Linear(512 * 7 * 7, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, num_classes),
+        )
+        if init_weights:
+            self._initialize_weights()
+
+    def forward(self, x, opt):
+        # forward through VGG net
+        output = self.features(x)
+        output = output.view(output.size(0), -1)
+        output = self.classifier(output)
+        return output
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+
+
 def alexnet_layers(in_channels=1, num_classes=2):
     layers = nn.Sequential(
         #  Feature extractor
