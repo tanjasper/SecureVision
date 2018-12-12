@@ -115,7 +115,7 @@ def main():
         val_dataset, batch_size=opt.batch_size, shuffle=False, num_workers=opt.num_threads, pin_memory=True)
 
     if opt.evaluate:
-        validate(val_loader, model, criterion, opt)
+        validate(val_loader, model, criterion, 0, opt)
         return
 
     for epoch in range(start_epoch, opt.epochs):
@@ -214,7 +214,7 @@ def validate(val_loader, model, criterion, epoch, opt):
             target = target.cuda(opt.gpu, non_blocking=True)
 
             # compute output
-            output = model(input)
+            output = model(input, opt)
             loss = criterion(output, target)
 
             # measure accuracy and record loss
