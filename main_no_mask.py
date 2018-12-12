@@ -41,7 +41,7 @@ def main():
         torch.manual_seed(opt.seed)
         cudnn.deterministic = True
 
-    model = networks.MaskVGG16(num_classes=2, batch_norm=True, mask_size=opt.mask_size, mask_perc=0.5)
+    model = networks.VGG16(num_classes=2, batch_norm=True)
     model = model.cuda(opt.gpu)
 
     criterion = nn.CrossEntropyLoss().cuda(opt.gpu)
@@ -74,16 +74,7 @@ def main():
         else:
             print("=> no checkpoint found at '{}'".format(resume_filename))
 
-    # freeze mask weights if needed
-    if not opt.train_mask:
-        for param in model.optics.parameters():
-            param.requires_grad = False
-        optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), opt.lr,
-                                    momentum=opt.momentum,
-                                    weight_decay=opt.weight_decay)
-
     cudnn.benchmark = True
-
 
     normalize = transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
     # Load training data
@@ -216,7 +207,7 @@ def validate(val_loader, model, criterion, epoch, opt):
             target = target.cuda(opt.gpu, non_blocking=True)
 
             # compute output
-            output = model(input)
+            output = model(input, opt)
             loss = criterion(output, target)
 
             # measure accuracy and record loss
