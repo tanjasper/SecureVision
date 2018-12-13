@@ -50,6 +50,10 @@ def main():
                                 momentum=opt.momentum,
                                 weight_decay=opt.weight_decay)
 
+    # create checkpoints folder
+    if not os.path.exists(opt.checkpoints_dir):
+        os.mkdir(opt.checkpoints_dir)
+
     lossvals = dict()
     lossvals['train'] = opt.epochs*[0]
     lossvals['train_class0'] = opt.epochs * [0]
