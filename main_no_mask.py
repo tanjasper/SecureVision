@@ -30,7 +30,7 @@ best_acc1 = 0
 
 
 def main():
-    global lossvals
+    global lossvals, best_acc1
     opt = options_direct_inference.generate_parser()
 
     start_epoch = 0
